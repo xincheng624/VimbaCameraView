@@ -8,6 +8,8 @@ class ImageProcess
 	//Point2f CCenter;
 	//Point2f rminmax;
 	//float roundness;
+	//static int pointCenterNumber;
+
 	std::vector<double> CircleData;
 	//可以补充一些数据用于存储计算后的数据，用于OpenCVshow画点和最小环的图
 public:
@@ -21,6 +23,7 @@ public:
 	//Point2f GetR();
 	//float GetRoundness();
 };
+
 
 
 class TPoint

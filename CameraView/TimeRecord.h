@@ -1,4 +1,4 @@
-#ifndef TIMERECORD_H
+ #ifndef TIMERECORD_H
 #define TIMERECORD_H
 
 #include <time.h>

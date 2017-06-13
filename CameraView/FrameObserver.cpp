@@ -44,6 +44,26 @@ void FrameObserver::FrameReceived(const FramePtr pFrame)
 	
 }
 
+/*void FrameObserver::SetFrame()
+{	
+	std::cout<<"SetFrame constructor."<<std::endl;
+	FeaturePtr pfeature;
+	VmbInt64_t nPLS;
+	if(m_pCamera != NULL)
+	{
+		VmbErrorType res = m_pCamera->GetFeatureByName("PayloadSize",pfeature); 
+		pfeature->GetValue(nPLS);
+		//Frame* payloadsize = new Frame(nPLS);//1,1和2有什么不同，为什么2正确，1则在return 0前报错， 原因，Frame是共享指针，因此，不需要自己回收。
+		for(FramePtrVector::iterator iter = Frames.begin();iter!=Frames.end();iter++)
+		{
+			(*iter).reset(new Frame(nPLS));//2
+			//(*iter).reset(payloadsize);//1 
+			//res = m_pCamera->AnnounceFrame(*iter);//不确定此种方法需要遵循该流程吗？不需要。
+		}
+		//delete payloadsize;//1因不需要初始化图像，暂时未用到此函数
+	}
+
+}*/
 
 
 FramePtr FrameObserver::GetFrames()
@@ -66,7 +86,7 @@ FramePtr FrameObserver::GetFrames()
 void FrameObserver::ClearFrames()
 {
 	m_FramesMutex.lock();
-	//std::cout<<"ClearFrames constructor."<<std::endl;
+	//std::cout<<"ClearFrames constructor."<<std::endl; 
 	std::queue<FramePtr> empty;
 
 	swap(m_Frames, empty);

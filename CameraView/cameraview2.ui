@@ -6,78 +6,115 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>800</height>
+    <width>1100</width>
+    <height>1000</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1100</width>
+    <height>1000</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1100</width>
+    <height>1000</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>CameraView</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="centralWidget">
+   <property name="minimumSize">
+    <size>
+     <width>800</width>
+     <height>800</height>
+    </size>
+   </property>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>974</width>
-      <height>700</height>
+      <x>41</x>
+      <y>32</y>
+      <width>978</width>
+      <height>866</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_8">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_12">
+      <layout class="QHBoxLayout" name="horizontalLayout_13">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0">
+        <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
           <widget class="QScrollArea" name="scrollAreaPic">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
            <property name="minimumSize">
             <size>
-             <width>620</width>
-             <height>420</height>
+             <width>600</width>
+             <height>400</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>1000</width>
-             <height>1000</height>
+             <width>600</width>
+             <height>400</height>
             </size>
            </property>
-           <property name="verticalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOn</enum>
-           </property>
-           <property name="horizontalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOn</enum>
-           </property>
            <property name="widgetResizable">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <widget class="QWidget" name="scrollAreaWidgetContents">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>618</width>
-              <height>418</height>
+              <width>600</width>
+              <height>400</height>
              </rect>
             </property>
             <property name="minimumSize">
              <size>
-              <width>0</width>
-              <height>0</height>
+              <width>600</width>
+              <height>400</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>60000</width>
-              <height>30000</height>
+              <width>600</width>
+              <height>400</height>
              </size>
             </property>
+            <widget class="QLabel" name="labelPicShow">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>600</width>
+               <height>400</height>
+              </rect>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>600</width>
+               <height>400</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>600</width>
+               <height>400</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
            </widget>
           </widget>
          </item>
@@ -98,7 +135,7 @@
            <property name="autoFillBackground">
             <bool>true</bool>
            </property>
-           <widget class="QWidget" name="layoutWidget_2">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>70</x>
@@ -122,7 +159,17 @@
                   <bool>false</bool>
                  </property>
                  <property name="text">
-                  <string>启动</string>
+                  <string>Start</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButtonPause">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Pause</string>
                  </property>
                 </widget>
                </item>
@@ -132,7 +179,7 @@
                   <bool>false</bool>
                  </property>
                  <property name="text">
-                  <string>停止</string>
+                  <string>Stop</string>
                  </property>
                 </widget>
                </item>
@@ -147,47 +194,12 @@
                 <number>40</number>
                </property>
                <item>
-                <widget class="QLabel" name="labelImgNumber">
-                 <property name="maximumSize">
-                  <size>
-                   <width>60</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>采集张数</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="lineEditImgNumber">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>40</width>
-                   <height>10</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QPushButton" name="pushButtonSave">
                  <property name="enabled">
                   <bool>false</bool>
                  </property>
                  <property name="text">
-                  <string>保存</string>
+                  <string>Save</string>
                  </property>
                 </widget>
                </item>
@@ -196,33 +208,8 @@
                  <property name="enabled">
                   <bool>false</bool>
                  </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>100</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>100</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>11</pointsize>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="contextMenuPolicy">
-                  <enum>Qt::NoContextMenu</enum>
-                 </property>
-                 <property name="layoutDirection">
-                  <enum>Qt::LeftToRight</enum>
-                 </property>
                  <property name="text">
-                  <string>圆心求取</string>
+                  <string>Process Switch</string>
                  </property>
                 </widget>
                </item>
@@ -235,16 +222,16 @@
         </layout>
        </item>
        <item>
-        <spacer name="horizontalSpacer">
+        <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
+          <enum>QSizePolicy::Minimum</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>40</width>
+           <width>60</width>
            <height>20</height>
           </size>
          </property>
@@ -414,9 +401,6 @@
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
@@ -518,7 +502,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEditRadius1">
+              <widget class="QLineEdit" name="lineEdit">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -551,7 +535,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEditRadius2">
+              <widget class="QLineEdit" name="lineEditRadius">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -592,6 +576,19 @@
              </item>
             </layout>
            </item>
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>50</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
           </layout>
          </item>
         </layout>
@@ -606,7 +603,7 @@
           <enum>QLayout::SetMinimumSize</enum>
          </property>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_13">
+          <layout class="QHBoxLayout" name="horizontalLayout_12">
            <item>
             <widget class="QLabel" name="labelInfo">
              <property name="text">
@@ -615,7 +612,7 @@
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_2">
+            <spacer name="horizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -710,83 +707,63 @@
      </item>
     </layout>
    </widget>
-   <widget class="QLabel" name="labelPicShow">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>0</width>
-      <height>0</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>0</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>30000</width>
-      <height>30000</height>
-     </size>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-    </property>
-   </widget>
   </widget>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1000</width>
+     <width>1100</width>
      <height>23</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>文件</string>
     </property>
-    <addaction name="actionTest"/>
-    <addaction name="actionCircle"/>
+    <addaction name="actionStart"/>
+    <addaction name="actionSave"/>
    </widget>
-   <widget class="QMenu" name="menu_2">
+   <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>帮助</string>
     </property>
     <addaction name="actionAbout"/>
+    <addaction name="actionAboutQt"/>
    </widget>
-   <addaction name="menu"/>
-   <addaction name="menu_2"/>
+   <addaction name="menuFile"/>
+   <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionTest">
+  <action name="actionStart">
    <property name="text">
-    <string>中心点求取</string>
+    <string>开始(&amp;A)</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+   <property name="statusTip">
+    <string>重新开始</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>保存(&amp;S)</string>
+   </property>
+   <property name="statusTip">
+    <string>保存图片</string>
    </property>
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
+    <string>About(A)</string>
    </property>
   </action>
-  <action name="actionCircle">
+  <action name="actionAboutQt">
    <property name="text">
-    <string>回转半径求取</string>
+    <string>AboutQt(&amp;Q)</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="cameraview.qrc"/>
+ </resources>
  <connections/>
 </ui>

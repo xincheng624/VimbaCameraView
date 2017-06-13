@@ -4,22 +4,24 @@
 #include <opencv2\imgproc\imgproc_c.h>
 using namespace cv;
 
-Point2f ImageProcess::center(Mat& img)
+#include <fstream>
+//int ImageProcess::pointCenterNumber = 0;
+std::ofstream pointOut("PointRecord.txt",std::ios::app);
+
+Point2f ImageProcess::center(Mat& img)//灰度加权法求重心
 {
 	//cvtColor(img,img,CV_BGR2GRAY);
 	Mat dst=Mat(img.size(),img.type());
 	threshold(img,dst,0,255,CV_THRESH_TOZERO|CV_THRESH_OTSU);
 	/*threshold(img,img,0,255,CV_THRESH_TOZERO|CV_THRESH_OTSU);
 	Moments m = moments(img);*/
-
+	
 	Moments m = moments(dst);
 	Point2d cen;
-	cen.x = m.m10/m.m00;//求重心
+	cen.x = m.m10/m.m00;
 	cen.y = m.m01/m.m00;
-
-	//std::cout<<"x:"<<cen.x<<std::endl;
-	//std::cout<<"y:"<<cen.y<<std::endl;
-
+	//pointOut<<++pointCenterNumber<<" ";
+	pointOut<<cen.x<<" "<<cen.y<<std::endl;
 	return cen;
 }
 
@@ -67,6 +69,7 @@ TCircle circumcircle(TTriangle t)//三角形外接圆
 
 	res.center.x = (c1 * (yA - yC) - c2 * (yA - yB)) / ((xA - xB) * (yA - yC) - (xA - xC) * (yA - yB));  
     res.center.y = (c1 * (xA - xC) - c2 * (xA - xB)) / ((yA - yB) * (xA - xC) - (yA - yC) * (xA - xB));
+	res.r = dist(res.center,t.t[0]);
 	return res;
 }
 
@@ -86,7 +89,7 @@ TCircle CircleCase(int PointNum,TTriangle p)
 	}
 	else if (PointNum == 2)
 	{
-		res.center.x = (p.t[0].x+p.t[1].x)/2;
+		res.center.x = (p.t[0].x+p.t[1].x)/2;   
 		res.center.y = (p.t[0].y+p.t[1].y)/2;
 		res.r = dist(p.t[0],p.t[1])/2;
 	}
@@ -98,7 +101,7 @@ TCircle CircleCase(int PointNum,TTriangle p)
 	return res;
 }
 
-void MinimalCircle(int num,int PointNum,TTriangle Cir)
+void MinimalCircle(int num,int PointNum,TTriangle Cir)//在数据点少的情况下好像无法得到最小值，需验证下情况是否属实 2017.3.29
 {
 	refreshCir = CircleCase(PointNum,Cir);
 	if (PointNum == 3)
@@ -108,7 +111,7 @@ void MinimalCircle(int num,int PointNum,TTriangle Cir)
 		if( dist(XY[i],refreshCir.center) > refreshCir.r )
 		{
 			Cir.t[PointNum] = XY[i]; 
-			MinimalCircle(num-1,PointNum+1,Cir);
+			MinimalCircle(num-1,PointNum+1,Cir);//此处采用递归替代，但是替代策略有问题，替代不全，大数据集没问题，小数据集还是有点问题
 		}
 	}
 }

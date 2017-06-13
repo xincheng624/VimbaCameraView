@@ -15,11 +15,13 @@ class APIController
 {
 public:
 	APIController();
+	APIController(int imgNumber);
 	~APIController();
-
+	
+	//相机操作
 	VmbErrorType            StartUp();
 	void                    ShutDown();
-
+	void                    ParamReady();
 	VmbErrorType            OpenCamera();
 	void                    CloseCamera();
 	CameraPtr               GetCamera();
@@ -31,6 +33,7 @@ public:
 	void                    SaveFrame( FramePtr p);
 	VmbPixelFormatType      GetPixelFormat() const;
 
+	//相机基本信息接口
 	std::string             GetVersion() const;
 	std::string             GetCameraID();
 	int                     GetHeight() const;
@@ -38,24 +41,31 @@ public:
 	int                     GetImgNum() const;
 	double                  GetExposureTime();
 
-	VmbErrorType            GetAsyPic();
+	//相机帧获取
+	VmbErrorType            StartContinousGettingImage();
 	VmbErrorType            StopContinousGettingImage();
 	QObject*                GetObserverCamera();
 	QObject*                GetObserverFrames();
 	void                    ClearObserverFrames();
 	void                    QueueFrame( FramePtr frame );
 
-	cv::Point2f             LaserPoint( cv::Mat &tmp);
-	std::vector<double>     CirclePoint();
+	//图像处理接口
+	cv::Point2d             LaserPoint( cv::Mat &tmp);
+	//散点包络圆求解
+	std::vector<double>&     CirclePoint( std::vector<cv::Point2d>& point );
+	std::vector<double>&     CirclePoint();
 
 	void                    WriteToFile();
-	//void                    SaveImageToFile();
+	
+	cv::Mat                 cvQImage2Mat( const QImage& image );
+	QImage                  cvMat2QImage( const cv::Mat& mat );
+
+	void                    LoadSettings();
+	void                    imgNumberChange(int imgNumber);
+	void                    ExposureTimeChange( int exposureTime );
+
+	//void                  SaveImageToFile();
 	//VimbaSystem& GetSys() const;
-	cv::Mat                 cvQImage2Mat( QImage image );
-	QImage                  cvMat2QImage( cv::Mat mat );
-
-	void LoadSettings();
-
 private:
 	VimbaSystem& m_system;
 	CameraPtr m_pCamera;
@@ -77,7 +87,7 @@ private:
 
 	std::vector<const char*> FeaturesList;
 	
-	std::vector<cv::Point2f> Center;
+	std::vector<cv::Point2d> Center;
 	std::vector<double> CircleData;
 };
 

@@ -36,6 +36,7 @@ class Ui_CameraViewClass
 public:
     QAction *actionTest;
     QAction *actionAbout;
+    QAction *actionCircle;
     QWidget *centralwidget;
     QWidget *layoutWidget;
     QVBoxLayout *verticalLayout_8;
@@ -43,7 +44,6 @@ public:
     QVBoxLayout *verticalLayout_4;
     QScrollArea *scrollAreaPic;
     QWidget *scrollAreaWidgetContents;
-    QLabel *labelPicShow;
     QWidget *widgetControl;
     QWidget *layoutWidget_2;
     QVBoxLayout *verticalLayout_6;
@@ -51,8 +51,9 @@ public:
     QPushButton *pushButtonStart;
     QPushButton *pushButtonStop;
     QHBoxLayout *horizontalLayout_2;
+    QLabel *labelImgNumber;
+    QLineEdit *lineEditImgNumber;
     QPushButton *pushButtonSave;
-    QSpacerItem *horizontalSpacer_4;
     QCheckBox *checkBoxProcess;
     QSpacerItem *horizontalSpacer;
     QVBoxLayout *verticalLayout_3;
@@ -100,6 +101,7 @@ public:
     QLabel *labelError;
     QSpacerItem *horizontalSpacer_3;
     QTextBrowser *textBrowserError;
+    QLabel *labelPicShow;
     QMenuBar *menubar;
     QMenu *menu;
     QMenu *menu_2;
@@ -115,11 +117,13 @@ public:
         actionTest->setMenuRole(QAction::NoRole);
         actionAbout = new QAction(CameraViewClass);
         actionAbout->setObjectName(QString::fromUtf8("actionAbout"));
+        actionCircle = new QAction(CameraViewClass);
+        actionCircle->setObjectName(QString::fromUtf8("actionCircle"));
         centralwidget = new QWidget(CameraViewClass);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         layoutWidget = new QWidget(centralwidget);
         layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 20, 974, 680));
+        layoutWidget->setGeometry(QRect(10, 20, 974, 700));
         verticalLayout_8 = new QVBoxLayout(layoutWidget);
         verticalLayout_8->setObjectName(QString::fromUtf8("verticalLayout_8"));
         verticalLayout_8->setContentsMargins(0, 0, 0, 0);
@@ -129,19 +133,21 @@ public:
         verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
         scrollAreaPic = new QScrollArea(layoutWidget);
         scrollAreaPic->setObjectName(QString::fromUtf8("scrollAreaPic"));
-        scrollAreaPic->setMinimumSize(QSize(600, 400));
-        scrollAreaPic->setMaximumSize(QSize(600, 400));
-        scrollAreaPic->setWidgetResizable(true);
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(scrollAreaPic->sizePolicy().hasHeightForWidth());
+        scrollAreaPic->setSizePolicy(sizePolicy);
+        scrollAreaPic->setMinimumSize(QSize(620, 420));
+        scrollAreaPic->setMaximumSize(QSize(1000, 1000));
+        scrollAreaPic->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        scrollAreaPic->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        scrollAreaPic->setWidgetResizable(false);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName(QString::fromUtf8("scrollAreaWidgetContents"));
-        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 600, 400));
-        scrollAreaWidgetContents->setMinimumSize(QSize(600, 400));
-        scrollAreaWidgetContents->setMaximumSize(QSize(600, 400));
-        labelPicShow = new QLabel(scrollAreaWidgetContents);
-        labelPicShow->setObjectName(QString::fromUtf8("labelPicShow"));
-        labelPicShow->setGeometry(QRect(0, 0, 600, 400));
-        labelPicShow->setMinimumSize(QSize(600, 400));
-        labelPicShow->setMaximumSize(QSize(600, 400));
+        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 618, 418));
+        scrollAreaWidgetContents->setMinimumSize(QSize(0, 0));
+        scrollAreaWidgetContents->setMaximumSize(QSize(60000, 30000));
         scrollAreaPic->setWidget(scrollAreaWidgetContents);
 
         verticalLayout_4->addWidget(scrollAreaPic);
@@ -178,25 +184,39 @@ public:
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
         horizontalLayout_2->setContentsMargins(40, -1, 40, -1);
+        labelImgNumber = new QLabel(layoutWidget_2);
+        labelImgNumber->setObjectName(QString::fromUtf8("labelImgNumber"));
+        labelImgNumber->setMaximumSize(QSize(60, 20));
+
+        horizontalLayout_2->addWidget(labelImgNumber);
+
+        lineEditImgNumber = new QLineEdit(layoutWidget_2);
+        lineEditImgNumber->setObjectName(QString::fromUtf8("lineEditImgNumber"));
+        QSizePolicy sizePolicy1(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(lineEditImgNumber->sizePolicy().hasHeightForWidth());
+        lineEditImgNumber->setSizePolicy(sizePolicy1);
+        lineEditImgNumber->setMinimumSize(QSize(40, 10));
+        lineEditImgNumber->setMaximumSize(QSize(40, 20));
+
+        horizontalLayout_2->addWidget(lineEditImgNumber);
+
         pushButtonSave = new QPushButton(layoutWidget_2);
         pushButtonSave->setObjectName(QString::fromUtf8("pushButtonSave"));
         pushButtonSave->setEnabled(false);
 
         horizontalLayout_2->addWidget(pushButtonSave);
 
-        horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
-
-        horizontalLayout_2->addItem(horizontalSpacer_4);
-
         checkBoxProcess = new QCheckBox(layoutWidget_2);
         checkBoxProcess->setObjectName(QString::fromUtf8("checkBoxProcess"));
         checkBoxProcess->setEnabled(false);
-        checkBoxProcess->setMinimumSize(QSize(4, 20));
-        checkBoxProcess->setMaximumSize(QSize(150, 20));
+        checkBoxProcess->setMinimumSize(QSize(100, 20));
+        checkBoxProcess->setMaximumSize(QSize(100, 20));
         QFont font;
         font.setPointSize(11);
-        font.setBold(false);
-        font.setWeight(50);
+        font.setBold(true);
+        font.setWeight(75);
         checkBoxProcess->setFont(font);
         checkBoxProcess->setContextMenuPolicy(Qt::NoContextMenu);
         checkBoxProcess->setLayoutDirection(Qt::LeftToRight);
@@ -443,11 +463,11 @@ public:
 
         textBrowserInfo = new QTextBrowser(layoutWidget);
         textBrowserInfo->setObjectName(QString::fromUtf8("textBrowserInfo"));
-        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(textBrowserInfo->sizePolicy().hasHeightForWidth());
-        textBrowserInfo->setSizePolicy(sizePolicy);
+        QSizePolicy sizePolicy2(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        sizePolicy2.setHorizontalStretch(0);
+        sizePolicy2.setVerticalStretch(0);
+        sizePolicy2.setHeightForWidth(textBrowserInfo->sizePolicy().hasHeightForWidth());
+        textBrowserInfo->setSizePolicy(sizePolicy2);
         textBrowserInfo->setMinimumSize(QSize(480, 150));
         textBrowserInfo->setMaximumSize(QSize(480, 150));
 
@@ -475,8 +495,8 @@ public:
 
         textBrowserError = new QTextBrowser(layoutWidget);
         textBrowserError->setObjectName(QString::fromUtf8("textBrowserError"));
-        sizePolicy.setHeightForWidth(textBrowserError->sizePolicy().hasHeightForWidth());
-        textBrowserError->setSizePolicy(sizePolicy);
+        sizePolicy2.setHeightForWidth(textBrowserError->sizePolicy().hasHeightForWidth());
+        textBrowserError->setSizePolicy(sizePolicy2);
         textBrowserError->setMinimumSize(QSize(480, 150));
         textBrowserError->setMaximumSize(QSize(480, 150));
 
@@ -488,6 +508,13 @@ public:
 
         verticalLayout_8->addLayout(horizontalLayout_15);
 
+        labelPicShow = new QLabel(centralwidget);
+        labelPicShow->setObjectName(QString::fromUtf8("labelPicShow"));
+        labelPicShow->setEnabled(true);
+        labelPicShow->setGeometry(QRect(0, 0, 0, 0));
+        labelPicShow->setMinimumSize(QSize(0, 0));
+        labelPicShow->setMaximumSize(QSize(30000, 30000));
+        labelPicShow->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
         CameraViewClass->setCentralWidget(centralwidget);
         menubar = new QMenuBar(CameraViewClass);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -504,6 +531,7 @@ public:
         menubar->addAction(menu->menuAction());
         menubar->addAction(menu_2->menuAction());
         menu->addAction(actionTest);
+        menu->addAction(actionCircle);
         menu_2->addAction(actionAbout);
 
         retranslateUi(CameraViewClass);
@@ -514,11 +542,12 @@ public:
     void retranslateUi(QMainWindow *CameraViewClass)
     {
         CameraViewClass->setWindowTitle(QApplication::translate("CameraViewClass", "CameraView", 0, QApplication::UnicodeUTF8));
-        actionTest->setText(QApplication::translate("CameraViewClass", "\346\265\213\350\257\225", 0, QApplication::UnicodeUTF8));
+        actionTest->setText(QApplication::translate("CameraViewClass", "\344\270\255\345\277\203\347\202\271\346\261\202\345\217\226", 0, QApplication::UnicodeUTF8));
         actionAbout->setText(QApplication::translate("CameraViewClass", "About", 0, QApplication::UnicodeUTF8));
-        labelPicShow->setText(QString());
+        actionCircle->setText(QApplication::translate("CameraViewClass", "\345\233\236\350\275\254\345\215\212\345\276\204\346\261\202\345\217\226", 0, QApplication::UnicodeUTF8));
         pushButtonStart->setText(QApplication::translate("CameraViewClass", "\345\220\257\345\212\250", 0, QApplication::UnicodeUTF8));
         pushButtonStop->setText(QApplication::translate("CameraViewClass", "\345\201\234\346\255\242", 0, QApplication::UnicodeUTF8));
+        labelImgNumber->setText(QApplication::translate("CameraViewClass", "\351\207\207\351\233\206\345\274\240\346\225\260", 0, QApplication::UnicodeUTF8));
         pushButtonSave->setText(QApplication::translate("CameraViewClass", "\344\277\235\345\255\230", 0, QApplication::UnicodeUTF8));
         checkBoxProcess->setText(QApplication::translate("CameraViewClass", "\345\234\206\345\277\203\346\261\202\345\217\226", 0, QApplication::UnicodeUTF8));
         labelWidth->setText(QApplication::translate("CameraViewClass", "\345\256\275\357\274\210Width\357\274\211", 0, QApplication::UnicodeUTF8));
@@ -534,6 +563,7 @@ public:
         labelRadiusError->setText(QApplication::translate("CameraViewClass", "\345\233\236\350\275\254\350\257\257\345\267\256T", 0, QApplication::UnicodeUTF8));
         labelInfo->setText(QApplication::translate("CameraViewClass", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600; color:#0000ff;\">\344\277\241\346\201\257</span></p></body></html>", 0, QApplication::UnicodeUTF8));
         labelError->setText(QApplication::translate("CameraViewClass", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600; color:#ff0000;\">\351\224\231\350\257\257</span></p></body></html>", 0, QApplication::UnicodeUTF8));
+        labelPicShow->setText(QString());
         menu->setTitle(QApplication::translate("CameraViewClass", "\346\226\207\344\273\266", 0, QApplication::UnicodeUTF8));
         menu_2->setTitle(QApplication::translate("CameraViewClass", "\345\270\256\345\212\251", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

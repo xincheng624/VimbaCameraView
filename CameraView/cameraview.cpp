@@ -1,5 +1,6 @@
 #include "cameraview.h"
 #include <iostream>
+#include <fstream>
 #include "Common\ErrorCodeToMessage.h"
 #include "VimbaImageTransform\Include\VmbTransform.h"
 #include <qfiledialog.h>
@@ -14,12 +15,15 @@ CameraView::CameraView(QWidget *parent, Qt::WFlags flags,QString sId,QString sAc
 	, bIsCamOpen ( false)
 	, bIsCamRun ( false )
 	, m_pCam ( Cam )
-	, m_pcontroller( new APIController() )
 	, imgCount( 0 ) 
+	, m_pcontroller( new APIController() )
 	//, m_pviewer(NULL)
 {
 	ui.setupUi(this);
-
+	
+	//lineEditImgNumber正则，限制为3位正整数
+	QRegExp regExp("[1-9][0-9]{0,2}");
+	ui.lineEditImgNumber->setValidator(new QRegExpValidator(regExp,this));
 	//m_pscene = QSharedPointer<QGraphicsScene>( new QGraphicsScene() );
 	//m_pviewer = new QGraphicsView();
 
@@ -41,6 +45,16 @@ CameraView::CameraView(QWidget *parent, Qt::WFlags flags,QString sId,QString sAc
 		}
 	}
 	
+
+	/*m_pscene = QSharedPointer<QGraphicsScene>( new QGraphicsScene() );
+	m_pPixmapItem = new QGraphicsPixmapItem();
+	m_pviewer = new Viewer( Ui::CameraViewClass::widgetPictureWindow );
+	m_pviewer->setScene( m_pscene.data() );
+	m_pscene->addItem( m_pPixmapItem );
+	this->setCentralWidget( m_pviewer );
+	QPixmap image("qt.png");
+	m_pPixmapItem->setPixmap(image);
+	m_pviewer->show();*/ //此方法暂时不考虑
 
 
 	
@@ -65,7 +79,7 @@ void CameraView::CamStart( void )
 		imgCount = 0; 
 		emit FrameCountChange( imgCount );
 
-		VmbErrorType res = m_pcontroller->GetAsyPic();
+		VmbErrorType res = m_pcontroller->StartContinousGettingImage();
 		
 		if ( res == VmbErrorSuccess )
 		{
@@ -160,18 +174,21 @@ bool CameraView::isStreamingAvailable( void )
 
 void CameraView::createConnects( void )
 {
-	connect(this,SIGNAL(FrameCountChange(int)),this,SLOT(onImgCountChange(int)));
-	connect(this,SIGNAL(CenterChange(cv::Point2f)),this,SLOT(onCenterChange(cv::Point2f)));//圆心位置实时更新显示
-	connect(ui.actionTest,SIGNAL(triggered()),this,SLOT(testStart()));
+	connect(ui.lineEditImgNumber,SIGNAL(editingFinished()),this,SLOT(onImgNumberChange()));
+	connect(ui.lineEditExposureTime,SIGNAL(editingFinished()),this,SLOT(onExposureTimeChange()));
+	connect(this,SIGNAL(FrameCountChange(int)),this,SLOT(onImgCountChange(int)));//注意信号发送的位置和槽接受的位置
+	connect(this,SIGNAL(CenterChange(const cv::Point2f&)),this,SLOT(onCenterChange(const cv::Point2f&)));//圆心位置实时更新显示
+	connect(ui.actionTest,SIGNAL(triggered()),this,SLOT(testCenter()));
+	connect(ui.actionCircle,SIGNAL(triggered()),this,SLOT(testCircle()));
 	connect(ui.actionAbout,SIGNAL(triggered()),this,SLOT(About()));
 }
 
-void CameraView::InfoWindowDisplay( const QString str )
+void CameraView::InfoWindowDisplay( const QString& str )
 {
 	ui.textBrowserInfo->append(str);
 }
 
-void CameraView::ErrorWindowDisplay( const QString str )
+void CameraView::ErrorWindowDisplay( const QString& str )
 {
 	ui.textBrowserError->append(str);
 }
@@ -221,34 +238,72 @@ void CameraView::CamInfoDisplay (const CameraPtr m_pCam )
 	else
 		InfoWindowDisplay( QString::fromStdString("Camera Model Name:"+ strModelName) );
 
-	
+	/*errInterfaceID = m_pCam->GetInterfaceID(strInterfaceID);
+	if(VmbErrorSuccess != errInterfaceID)
+	{
+		ErrorStream << "[Error in getting camera interface ID.Error Code:" << errInterfaceID<<"-";
+		std::wcout<<ErrorCodeToMessage(errInterfaceID)<<std::endl;
+		strInterfaceID = ErrorStream.str();
+		ErrorWindowDisplay(  QString::fromStdString(strInterfaceID) );
+	}
+	else
+		InfoWindowDisplay( QString::fromStdString("Camera InterfaceID:" + strInterfaceID ) );*/ //显示"本地连接"，由于中文，未处理好，成乱码，先略去
 
 }
 
-void CameraView::PictureWindowDisplay(QImage image)
+void CameraView::PictureWindowDisplay(QImage& image)
 {
 
-
+	//显示过程急需改进，实时性不好,原因在于图像行列错误导致的问题
 	/*m_pscene->setSceneRect(0,0,image.width(),image.height());//Scene和View配合显示图像的方法
 	m_pixmap = m_pixmap.fromImage(image);
 	m_pscene->addPixmap(m_pixmap);
 
 	m_pviewer->setScene( m_pscene.data() );
 	m_pviewer->show();*/
-
 	//Pixmap(0,0,sWidth,sHeight,m_pixmap);*/
 
-
+	/*QLabel* label = new QLabel();
+	//label->resize( image.width(), image.height() );//label显示图像方法
+	label->resize( ui.scrollAreaPic->width()-20, ui.scrollAreaPic->height()-20 );
+	const QSize s = label->size();
+	label->setPixmap( QPixmap::fromImage( image ).scaled(s.width(),s.height(),Qt::KeepAspectRatio ) );
+	ui.scrollAreaPic->setWidget(label);
+	*/
+	ui.scrollAreaPic->setWidget( ui.labelPicShow);
 	//ui.labelPicShow->resize( image.width(), image.height() );//label显示图像方法
+	ui.labelPicShow->resize( ui.scrollAreaPic->width()-20, ui.scrollAreaPic->height()-20 );
 	const QSize s = ui.labelPicShow->size();
-
+	ui.labelPicShow->setPixmap( QPixmap::fromImage( image ).scaled(s.width(),s.height(),Qt::KeepAspectRatio ));
+	
 #ifndef NDEBUG
-	std::cout<<s.width()<<"X"<<s.height()<<std::endl; 
+	std::cout<<image.width()<<"X"<<image.height()<<std::endl; 
+	//std::cout<<s.width()<<"X"<<s.height()<<std::endl; 
 #endif
 
-	ui.labelPicShow->setPixmap( QPixmap::fromImage( image ).scaled(s.width(),
-		s.height(),Qt::KeepAspectRatioByExpanding ) );
+	
 
+}
+
+void CameraView::PictureWindowDraw(const std::vector<cv::Point2d>& point,const std::vector<double>& data )
+{
+	const int width = 3384;
+	const int height = 2710;
+	//QImage image(width,height,QImage::Format_Indexed8);
+	cv::Mat mat(height,width,CV_8UC1);
+	//cv::Mat mat = m_pcontroller->cvQImage2Mat(image);
+
+	std::vector<cv::Point2d>::const_iterator it = point.begin();
+	for(; it != point.end(); ++it)
+	{
+		cv::circle(mat,*it,4,cv::Scalar(0,0,0),-1,8);
+	}
+
+	cv::circle(mat,cv::Point2d(data[0],data[1]),data[2],cv::Scalar(0,0,0),2,8);
+	cv::circle(mat,cv::Point2d(data[0],data[1]),data[3],cv::Scalar(0,0,0),2,8);
+	QImage image = m_pcontroller->cvMat2QImage(mat);
+	PictureWindowDisplay(image);
+	emit CenterChange(cv::Point2d(data[0],data[1]));
 }
 
 void CameraView::onFrameReady(int status)//图像实时处理显示
@@ -294,12 +349,12 @@ void CameraView::onFrameReady(int status)//图像实时处理显示
 				 
 				 if ( ui.checkBoxProcess->isChecked() )//若勾选图像处理，则
 				 {
-					 cv::Point2f tmpCenter(-1,-1);
+					 cv::Point2d tmpCenter(-1,-1);
 					 cv::Mat tmp = m_pcontroller->cvQImage2Mat( m_image );
 					 tmpCenter = m_pcontroller->LaserPoint( tmp );   //进行图像处理,获取中心点
 					 m_image = m_pcontroller->cvMat2QImage( tmp );
 
-					 std::cout<< tmpCenter.x<<" "<<tmpCenter.y<<std::endl;
+					 std::cout<< imgCount<<"、 坐标："<<tmpCenter.x<<" "<<tmpCenter.y<<std::endl;
 					 if ( tmpCenter.x != -1 && tmpCenter.y != -1 )
 						 emit CenterChange( tmpCenter );
 
@@ -307,9 +362,8 @@ void CameraView::onFrameReady(int status)//图像实时处理显示
 
 				 PictureWindowDisplay( m_image );
 
-				 if ( imgCount == m_pcontroller->GetImgNum() ) //拍摄m_ImgNum张相片停止，如果注释加上（1）句则实现连续拍摄
-					 emit CamStop();
-				
+				 if ( imgCount >= m_pcontroller->GetImgNum() ) //拍摄m_ImgNum张相片停止，如果注释加上（1）句则实现连续拍摄
+					 emit CamStop();				
 				
 			}
 		 }
@@ -391,7 +445,7 @@ void CameraView::onCamChange(int reason)
 	}
 	else if ( UpdateTriggerPluggedOut == reason )
 	{
-		//需要补充判断，以处理相机正在运行的过程中松动的情况
+		//需要补充判断，以处理相机正在运行的过程中松动的情况，3/2
 		bIsCamOpen = false;
 		setPushButtonStartEnabled(false);
 		InfoWindowDisplay("Camera is disconnected.");
@@ -412,7 +466,7 @@ void CameraView::CamOpen( void )
 	
 	if ( m_pCam != NULL )
 	{
-		InfoWindowDisplay("Camera is connected.");
+		InfoWindowDisplay( QString::fromLocal8Bit("相机连接."));
 		VmbErrorType err = m_pcontroller->OpenCamera();
 		m_OpenError = err;
 	}
@@ -423,7 +477,8 @@ void CameraView::CamOpen( void )
 	}
 	else
 	{
-		InfoWindowDisplay("Camera Start set.");
+		InfoWindowDisplay( QString::fromLocal8Bit("相机打开.") );
+		m_pcontroller->ParamReady();
 		CamInfoDisplay( m_pCam );
 		bIsCamOpen = true;
 		bIsStreaming = isStreamingAvailable();
@@ -436,37 +491,50 @@ void CameraView::CamOpen( void )
 	}
 }
 
-void CameraView::setBasicInfo( CameraPtr Cam )
+void CameraView::onImgNumberChange(  )
 {
-	//ui.lineEditHeight->setText( QString::number( m_pcontroller->GetHeight()) );
-	//ui.lineEditWidth->setText( QString::number( m_pcontroller->GetWidth()) );
+	const QString& imgNumber = ui.lineEditImgNumber->text();
+	m_pcontroller->imgNumberChange( imgNumber.toInt() );
+	ui.lineEditImgNumber->setText( imgNumber );
 }
+
+void CameraView::onExposureTimeChange(  )
+{
+	const QString& ExposureTime = ui.lineEditExposureTime->text();
+	ui.lineEditExposureTime->setText( ExposureTime );
+	m_pcontroller->ExposureTimeChange( ExposureTime.toInt() );
+}
+
 
 void CameraView::onImgCountChange( int count)
 {
-	//std::cout<<count<<"////"<<std::endl;
 	ui.lineEditFrame->setText( QString::number(count,10) ); //10进制显示
 }
 
-void CameraView::onCenterChange( cv::Point2f p )
+void CameraView::onCenterChange(const cv::Point2f& p )
 {
 	ui.lineEditX->setText( QString::number(p.x, 'f', 1) );//以1位小数显示
 	ui.lineEditY->setText( QString::number(p.y, 'f', 1) );
 }
 
 
-void CameraView::testStart()
+void CameraView::testCenter()
 {
-	QString str = QFileDialog::getOpenFileName(this,
-		"open image file",".","Image files(*.bmp *.jpg)" );
-	
-	QImage image(str);
+	QString path = QFileDialog::getOpenFileName(this,
+		tr("Open image file"),tr("."),tr("Image files(*.bmp *.jpg)") );
+	//没有打开，则退出
+	if( path.length() == 0 ) 
+		return;
+
+	QImage image(path);
 
 	cv::Point2f tmpCenter(-1,-1);
 	
 	cv::Mat tmp = m_pcontroller->cvQImage2Mat( image );
 	tmpCenter = m_pcontroller->LaserPoint( tmp );   //进行图像处理,获取中心点
 	image = m_pcontroller->cvMat2QImage( tmp );
+
+
 	
 	PictureWindowDisplay(image);
 	std::cout<< tmpCenter.x<<" "<<tmpCenter.y<<std::endl;
@@ -475,6 +543,37 @@ void CameraView::testStart()
 		emit CenterChange( tmpCenter );
 
 }
+
+
+void CameraView::testCircle()
+{
+	QString path = QFileDialog::getOpenFileName(this,
+		tr("Get center points file"),tr("."),tr("Text files(*.txt *.csv)") );
+
+	if( path.length() == 0 ) 
+		return;
+
+	const int width = 3384;
+	const int height = 2710;
+	std::vector<cv::Point2d> Point;
+	QFile file(path);
+	if( !file.open( QIODevice::ReadOnly | QIODevice::Text) )
+		return;
+
+	QTextStream ts(&file);
+	while( !ts.atEnd() )
+	{
+		cv::Point2f temp;
+		ts>>temp.x>>temp.y;
+		if( temp.x >0 && temp.x< width && temp.y > 0 && temp.y < height )
+			Point.push_back(temp);
+	}
+
+	std::vector<double> data = m_pcontroller->CirclePoint(Point);
+	PictureWindowDraw(Point,data);
+}
+
+
 
 void CameraView::About()
 {

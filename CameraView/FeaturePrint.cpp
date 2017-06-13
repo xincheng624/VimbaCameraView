@@ -15,7 +15,6 @@ namespace VmbAPI{
 
 FeaturePrint::FeaturePrint():sys(VimbaSystem::GetInstance())
 {
-
 }
 
 FeaturePrint::~FeaturePrint()
@@ -28,7 +27,7 @@ void FeaturePrint::GetCamera(const CameraPtr &Camera)
 		pCamera = Camera;
 }
 
-std::ofstream out("Features.txt",std::ios::app);
+std::ofstream out;
 
 VmbErrorType PrintGetValueErrorMessage ( const VmbErrorType err )
 {
@@ -45,7 +44,7 @@ void PrintFeatureValue(const FeaturePtr &feature)
 {
 	VmbFeatureDataType  eType;
     VmbErrorType err = feature->GetDataType( eType );
-	//std::ofstream out("Features.txt",std::ios::app);//ios::app尾部追加
+	//std::ofstream out("Features.txt",std::ios::app);//ios::app尾部追加,2次打开导致先输出Num，再输出Value，Type，最后输出依次输出Feature Name等参数？具体机理不明，为改正问题将out改成全局变量了。
 	if( VmbErrorSuccess != err )
     {
         std::cout << "[Could not get feature Data Type. Error code: " << err << "-";
@@ -251,10 +250,12 @@ void FeaturePrint::Print(std::vector<const char*> featuresname)
 {
 	if(featuresname.size() != 0)
 	{
+		out.open("Features.txt",std::ios::app);
 		for(std::vector<const char*>::const_iterator iter=featuresname.begin();iter!=featuresname.end();iter++)
 		{
 			PrintFeatureValueByName(*iter);
 		}
+		out.close();
 	}
 	else
 		std::cout<<"No feature names for print value by name."<<std::endl;
